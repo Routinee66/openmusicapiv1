@@ -15,9 +15,13 @@ class SongHandler {
   async postSongHandler(request, h) {
     try {
       this._validator.validateSongPayload(request.payload);
-      const { title = 'untitled', year, performer, genre, duration = 0 , albumId = '' } = request.payload;
+      const {
+        title = 'untitled', year, performer, genre, duration = 0, albumId = null,
+      } = request.payload;
 
-      const songId = await this._service.addSong({ title, year, performer, genre, duration, albumId });
+      const songId = await this._service.addSong({
+        title, year, performer, genre, duration, albumId,
+      });
 
       const response = h.response({
         status: 'success',
@@ -52,51 +56,45 @@ class SongHandler {
 
   async getSongsHandler(request, h) {
     try {
-        
-        const { title, performer } = request.query;
-        let songs = null; 
+      const { title, performer } = request.query;
+      let songs = null;
 
-        if(title && performer){
-            songs = await this._service.getSongsByTitleAndPerformer(title, performer);
-        }
+      if (title && performer) {
+        songs = await this._service.getSongsByTitleAndPerformer(title, performer);
+      } else if (title) {
+        songs = await this._service.getSongsByTitle(title);
+      } else if (performer) {
+        songs = await this._service.getSongsByPerformer(performer);
+      } else {
+        songs = await this._service.getSongs();
+      }
 
-        else if (title){
-            songs = await this._service.getSongsByTitle(title);
-        }
-
-        else if (performer){
-            songs = await this._service.getSongsByPerformer(performer);
-        }
-        else{
-            songs = await this._service.getSongs();
-        }
-
-        return {
+      return {
         status: 'success',
         data: {
-            songs,
-          },
-        };
-      } catch (error) {
-        if (error instanceof ClientError) {
-          const response = h.response({
-            status: 'fail',
-            message: error.message,
-          });
-  
-          response.code(error.statusCode);
-          return response;
-        }
-  
+          songs,
+        },
+      };
+    } catch (error) {
+      if (error instanceof ClientError) {
         const response = h.response({
           status: 'fail',
-          message: 'Maaf, terjadi kegagalan pada server kami',
+          message: error.message,
         });
-  
-        response.code(500);
-        console.error(error);
+
+        response.code(error.statusCode);
         return response;
       }
+
+      const response = h.response({
+        status: 'fail',
+        message: 'Maaf, terjadi kegagalan pada server kami',
+      });
+
+      response.code(500);
+      console.error(error);
+      return response;
+    }
   }
 
   async getSongByIdHandler(request, h) {
@@ -135,10 +133,14 @@ class SongHandler {
   async putSongByIdHandler(request, h) {
     try {
       this._validator.validateSongPayload(request.payload);
-      const { title, year, genre, performer, duration = 0, albumId = '' } = request.payload;
+      const {
+        title, year, genre, performer, duration = 0, albumId = '',
+      } = request.payload;
       const { id } = request.params;
 
-      await this._service.editSongById(id, { title, year, performer, genre, duration, albumId });
+      await this._service.editSongById(id, {
+        title, year, performer, genre, duration, albumId,
+      });
       //   await this._service.editSongById(id, request.payload);
 
       return {

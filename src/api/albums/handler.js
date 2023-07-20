@@ -66,28 +66,10 @@ class AlbumHandler {
       const { id } = request.params;
       const album = await this._service.getAlbumById(id);
       const songs = await this._service.getSongByAlbum(id);
-      
-      if (songs===null) album.songs = [];
-      else album.songs = songs;
-    //   [
-        // songs
-    //     {
-    //         "title": "Life in Technicolor",
-    //         "year": 2008,
-    //         "performer": "Coldplay",
-    //         "genre": "Pop",
-    //         "duration": 120
-    //     },
-    //     {
-    //         "title": "Fix you",
-    //         "year": 2008,
-    //         "performer": "Coldplay",
-    //         "genre": "Pop",
-    //         "duration": 120,
-    //         "albumId": "{{albumId}}"
-    //     }
 
-    //   ]
+      if (songs === null) album.songs = [];
+      else album.songs = songs;
+
       return {
         status: 'success',
         data: {
@@ -123,7 +105,6 @@ class AlbumHandler {
       const { id } = request.params;
 
       await this._service.editAlbumById(id, { name, year });
-      //   await this._service.editAlbumById(id, request.payload);
 
       return {
         status: 'success',

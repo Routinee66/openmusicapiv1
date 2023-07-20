@@ -18,27 +18,27 @@ const init = async () => {
     port: process.env.PORT,
     host: process.env.HOST,
     routes: {
-        cors: {
-            origin: ['*'],
-        }
-    }
+      cors: {
+        origin: ['*'],
+      },
+    },
   });
 
   await server.register([
     {
-        plugin: albums,
-        options: {
-            service: albumsServices,
-            validator: AlbumsValidator
-        }
+      plugin: albums,
+      options: {
+        service: albumsServices,
+        validator: AlbumsValidator,
+      },
     },
     {
-        plugin: songs,
-        options: {
-            service: songsServices,
-            validator: SongsValidator
-        }
-    }
+      plugin: songs,
+      options: {
+        service: songsServices,
+        validator: SongsValidator,
+      },
+    },
   ]);
 
   await server.start();
