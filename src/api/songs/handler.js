@@ -134,7 +134,7 @@ class SongHandler {
     try {
       this._validator.validateSongPayload(request.payload);
       const {
-        title, year, genre, performer, duration = 0, albumId = '',
+        title, year, genre, performer, duration = 0, albumId = null,
       } = request.payload;
       const { id } = request.params;
 
